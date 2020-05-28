@@ -1,0 +1,12 @@
+{
+    "name": "WorkFlowy total tag time",
+    "version": "0.1",
+    "manifest_version": 2,
+    "description": "Calculate total hashtag time",
+    "content_scripts": [
+        {
+            "matches": ["*://www.workflowy.com/*", "*://workflowy.com/*"],
+            "js": ["inject.js"]
+        }
+    ]
+}
