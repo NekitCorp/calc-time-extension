@@ -1,7 +1,11 @@
-# calc-time-extension
+# WorkFlowy total hashtag time
 
-TODO:
+![presentation1](https://storage.yandexcloud.net/public-materials/presentation1.gif)
+![presentation2](https://storage.yandexcloud.net/public-materials/presentation2.gif)
 
--   Документация с гифкой
--   Манифест
--   Иконки
+## Supported tags
+
+-   `d` - days
+-   `h` - hours
+-   `m` - minutes
+-   `s` - seconds

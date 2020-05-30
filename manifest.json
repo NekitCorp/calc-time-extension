@@ -1,8 +1,13 @@
 {
-    "name": "WorkFlowy total tag time",
+    "name": "WorkFlowy total hashtag time",
     "version": "0.1",
     "manifest_version": 2,
-    "description": "Calculate total hashtag time",
+    "description": "Calculate total hashtag time on workflowy.com",
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    },
     "content_scripts": [
         {
             "matches": ["*://www.workflowy.com/*", "*://workflowy.com/*"],

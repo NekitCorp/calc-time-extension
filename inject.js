@@ -1,6 +1,9 @@
 const HIGHLIGHT_COLOR = "#13cbd3";
 const COUNTER_ID = "cte-counter";
 
+/**
+ * Observe to change tags
+ */
 function createObserver() {
     const observer = new MutationObserver(function (mutationsList) {
         for (const mutation of mutationsList) {
@@ -20,7 +23,12 @@ function createObserver() {
     observer.observe(document.body, { childList: true, subtree: true });
 }
 
-function getSeconds(str) {
+/**
+ * Parse and calculate total seconds from tag string
+ * @example "#2h20m" -> 8400
+ * @param {string} str
+ */
+function getTagSeconds(str) {
     // Test to fit string
     const regExp = /^#(\d+(d|h|m|s))+$/;
     if (!regExp.test(str)) {
@@ -53,6 +61,9 @@ function getSeconds(str) {
     return totalSeconds;
 }
 
+/**
+ * Render total recognized time in scroller
+ */
 function renderTotalTime() {
     // Try fine scroller
     const scroller = document.querySelector(".scroller");
@@ -63,7 +74,7 @@ function renderTotalTime() {
 
     // Calculate total time
     const tags = [...document.querySelectorAll(".contentTag")].map((el) => el.innerText);
-    let totalSeconds = tags.reduce((acc, val) => acc + getSeconds(val), 0);
+    let totalSeconds = tags.reduce((acc, val) => acc + getTagSeconds(val), 0);
 
     const days = Math.floor(totalSeconds / 86400);
     if (days > 0) {
@@ -106,11 +117,14 @@ function renderTotalTime() {
     }
 }
 
+/**
+ * Highlight recognized tags
+ */
 function highlight() {
     const tags = document.querySelectorAll(".contentTag");
 
     for (const tag of tags) {
-        if (getSeconds(tag.innerText) > 0) {
+        if (getTagSeconds(tag.innerText) > 0) {
             tag.style.outline = `1px dashed ${HIGHLIGHT_COLOR}`;
         }
     }
