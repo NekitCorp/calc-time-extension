@@ -1,5 +1,4 @@
-const HIGHLIGHT_BACKGROUND = "red";
-const HIGHLIGHT_COLOR = "white";
+const HIGHLIGHT_COLOR = "#13cbd3";
 const COUNTER_ID = "cte-counter";
 
 function createObserver() {
@@ -22,24 +21,36 @@ function createObserver() {
 }
 
 function getSeconds(str) {
-    let seconds = 0;
+    // Test to fit string
+    const regExp = /^#(\d+(d|h|m|s))+$/;
+    if (!regExp.test(str)) {
+        return 0;
+    }
+
+    let totalSeconds = 0;
+
     const days = str.match(/(\d+)\s*d/);
     const hours = str.match(/(\d+)\s*h/);
     const minutes = str.match(/(\d+)\s*m/);
+    const seconds = str.match(/(\d+)\s*s/);
 
     if (days) {
-        seconds += parseInt(days[1]) * 86400;
+        totalSeconds += parseInt(days[1]) * 86400;
     }
 
     if (hours) {
-        seconds += parseInt(hours[1]) * 3600;
+        totalSeconds += parseInt(hours[1]) * 3600;
     }
 
     if (minutes) {
-        seconds += parseInt(minutes[1]) * 60;
+        totalSeconds += parseInt(minutes[1]) * 60;
     }
 
-    return seconds;
+    if (seconds) {
+        totalSeconds += parseInt(seconds[1]);
+    }
+
+    return totalSeconds;
 }
 
 function renderTotalTime() {
@@ -52,8 +63,32 @@ function renderTotalTime() {
 
     // Calculate total time
     const tags = [...document.querySelectorAll(".contentTag")].map((el) => el.innerText);
-    const totalSeconds = tags.reduce((acc, val) => acc + getSeconds(val), 0);
-    const totalHtml = `Total time: <b>${totalSeconds} seconds</b>`;
+    let totalSeconds = tags.reduce((acc, val) => acc + getSeconds(val), 0);
+
+    const days = Math.floor(totalSeconds / 86400);
+    if (days > 0) {
+        totalSeconds -= days * 86400;
+    }
+
+    const hours = Math.floor(totalSeconds / 3600);
+    if (hours > 0) {
+        totalSeconds -= hours * 3600;
+    }
+
+    const minutes = Math.floor(totalSeconds / 60);
+    if (minutes > 0) {
+        totalSeconds -= minutes * 60;
+    }
+
+    const seconds = totalSeconds;
+
+    const totalHtml =
+        "Total time: <b>" +
+        (days > 0 ? days + "d " : "") +
+        (hours > 0 ? hours + "h " : "") +
+        (minutes > 0 ? minutes + "m " : "") +
+        (seconds > 0 ? seconds + "s" : "") +
+        "</b>";
 
     // Try find already added counter
     const counter = document.getElementById(COUNTER_ID);
@@ -76,8 +111,7 @@ function highlight() {
 
     for (const tag of tags) {
         if (getSeconds(tag.innerText) > 0) {
-            tag.style.background = HIGHLIGHT_BACKGROUND;
-            tag.style.color = HIGHLIGHT_COLOR;
+            tag.style.outline = `1px dashed ${HIGHLIGHT_COLOR}`;
         }
     }
 }
