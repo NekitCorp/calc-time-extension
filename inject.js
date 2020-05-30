@@ -1,3 +1,7 @@
+const HIGHLIGHT_BACKGROUND = "red";
+const HIGHLIGHT_COLOR = "white";
+const COUNTER_ID = "cte-counter";
+
 function createObserver() {
     const observer = new MutationObserver(function (mutationsList) {
         for (const mutation of mutationsList) {
@@ -6,8 +10,8 @@ function createObserver() {
                     const contentTag = addedNode.querySelector(".contentTagText");
 
                     if (contentTag) {
-                        console.log(contentTag.innerText);
-                        getTotalTime();
+                        highlight();
+                        renderTotalTime();
                     }
                 }
             }
@@ -38,9 +42,44 @@ function getSeconds(str) {
     return seconds;
 }
 
-function getTotalTime() {
-    const tags = [...document.querySelectorAll(".contentTagText")].map((el) => el.innerText);
-    return tags.reduce((acc, val) => acc + getSeconds(val), 0);
+function renderTotalTime() {
+    // Try fine scroller
+    const scroller = document.querySelector(".scroller");
+
+    if (!scroller) {
+        return;
+    }
+
+    // Calculate total time
+    const tags = [...document.querySelectorAll(".contentTag")].map((el) => el.innerText);
+    const totalSeconds = tags.reduce((acc, val) => acc + getSeconds(val), 0);
+    const totalHtml = `Total time: <b>${totalSeconds} seconds</b>`;
+
+    // Try find already added counter
+    const counter = document.getElementById(COUNTER_ID);
+
+    if (counter) {
+        counter.innerHTML = totalHtml;
+    } else {
+        const div = document.createElement("div");
+
+        div.innerHTML = totalHtml;
+        div.id = COUNTER_ID;
+        div.style.paddingLeft = 23 + "px";
+
+        scroller.appendChild(div);
+    }
+}
+
+function highlight() {
+    const tags = document.querySelectorAll(".contentTag");
+
+    for (const tag of tags) {
+        if (getSeconds(tag.innerText) > 0) {
+            tag.style.background = HIGHLIGHT_BACKGROUND;
+            tag.style.color = HIGHLIGHT_COLOR;
+        }
+    }
 }
 
 chrome.extension.sendMessage({}, function (response) {
@@ -50,6 +89,9 @@ chrome.extension.sendMessage({}, function (response) {
 
             // ----------------------------------------------------------
             // This part of the script triggers when page is done loading
+            highlight();
+            renderTotalTime();
+
             createObserver();
             // ----------------------------------------------------------
         }
